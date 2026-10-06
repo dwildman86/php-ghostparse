@@ -1,0 +1,28 @@
+{
+    "name": "wildye/email-parser",
+    "description": "PHP client for the GhostParse transactional email API: send email and verify/parse inbound email webhooks.",
+    "type": "library",
+    "license": "MIT",
+    "keywords": ["email", "transactional", "webhook", "inbound", "parser", "dkim", "api"],
+    "authors": [{ "name": "WILDYE LIMITED" }],
+    "require": {
+        "php": ">=8.1",
+        "ext-curl": "*",
+        "ext-json": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.5"
+    },
+    "autoload": {
+        "psr-4": { "Wildye\\EmailParser\\": "src/" }
+    },
+    "autoload-dev": {
+        "psr-4": { "Wildye\\EmailParser\\Tests\\": "tests/" }
+    },
+    "scripts": {
+        "test": "phpunit"
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
