@@ -19,6 +19,10 @@ final class SentEmail
         public readonly \DateTimeImmutable $sentAt,
         /** Replies to this email arrive with this threadId. */
         public readonly ?string $threadId = null,
+        /** The From address the email was sent with. */
+        public readonly ?string $fromAddress = null,
+        /** The From name used (yours, or the address's saved From name); null when none. */
+        public readonly ?string $fromName = null,
     ) {
     }
 
@@ -32,6 +36,8 @@ final class SentEmail
             array_values(array_map('strval', $data['rejected'] ?? [])),
             new \DateTimeImmutable((string) ($data['sent_at'] ?? 'now')),
             isset($data['thread_id']) ? (string) $data['thread_id'] : null,
+            isset($data['from']['address']) ? (string) $data['from']['address'] : null,
+            isset($data['from']['name']) ? (string) $data['from']['name'] : null,
         );
     }
 }

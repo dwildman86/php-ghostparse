@@ -59,6 +59,24 @@ final class ClientTest extends TestCase
         self::assertSame(self::email()->toArray(), json_decode($req['body'], true));
     }
 
+    public function testSendsWithAFromNameAndReturnsTheFromUsed(): void
+    {
+        $t = new FakeTransport(FakeTransport::json(200, self::sent() + ['from' => ['address' => 'orders@acme.test', 'name' => 'Acme Orders']]));
+        $sent = $this->client($t)->send(self::email()->fromName('Acme Orders')->signature(false));
+
+        self::assertSame('orders@acme.test', $sent->fromAddress);
+        self::assertSame('Acme Orders', $sent->fromName);
+        $body = json_decode($t->requests[0]['body'], true);
+        self::assertSame('Acme Orders', $body['from_name']);
+        self::assertFalse($body['signature']);
+    }
+
+    public function testRefusesAFromNameWithALineBreak(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        Email::create()->fromName("Evil\r\nBcc: x@y.z");
+    }
+
     public function testAcceptsARawArrayAndAnExplicitIdempotencyKey(): void
     {
         $t = new FakeTransport(FakeTransport::json(200, self::sent()));

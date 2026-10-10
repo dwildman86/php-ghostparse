@@ -25,7 +25,7 @@ use Wildye\EmailParser\Http\Transport;
  */
 final class Client
 {
-    public const VERSION = '1.1.0';
+    public const VERSION = '1.2.0';
     public const DEFAULT_BASE_URL = 'https://ghostparse.com';
 
     private string $baseUrl;
