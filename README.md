@@ -33,7 +33,7 @@ $client = new Client(getenv('EMAIL_PARSER_API_KEY'));
 
 $sent = $client->send(
     Email::create()
-        ->from('orders@yourapp.com', 'Your App')
+        ->from('orders@yourapp.com', 'Your App')   // or ->fromName('Your App'); without one, the address's saved From name is used
         ->to('customer@example.com', 'Sam Customer')
         ->subject('Your receipt for order #1042')
         ->html('<p>Thanks for your order.</p>')
@@ -44,6 +44,7 @@ $sent = $client->send(
 
 // The platform doesn't keep a copy: store what you need.
 $sent->id;         // "out_…"
+$sent->fromName;   // "Your App": the From name used
 $sent->messageId;  // "<out_…@yourapp.com>", for threading replies
 $sent->accepted;   // ["customer@example.com"]
 ```

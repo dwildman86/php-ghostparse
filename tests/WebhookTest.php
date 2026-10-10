@@ -19,23 +19,27 @@ final class WebhookTest extends TestCase
     private const SECRET = 'whsec_Rml4dHVyZVNlY3JldEZvclNES1Rlc3RzMDE=';
     private const ROTATED = 'whsec_Um90YXRlZEZpeHR1cmVTZWNyZXQwMjM0NTY=';
     private const SIGNED_AT = 1790932497;
-    private const FIXTURES = __DIR__ . '/../../fixtures';
+    /** The shared fixtures: bundled in tests/fixtures in the package's own repository, in sdk/fixtures in the monorepo. */
+    private static function fixtures(): string
+    {
+        return is_dir(__DIR__ . '/fixtures') ? __DIR__ . '/fixtures' : __DIR__ . '/../../fixtures';
+    }
 
     private static function body(): string
     {
-        return (string) file_get_contents(self::FIXTURES . '/email.received.json');
+        return (string) file_get_contents(self::fixtures() . '/email.received.json');
     }
 
     /** Original-format signature header. */
     private static function signature(): string
     {
-        return trim((string) file_get_contents(self::FIXTURES . '/email.received.legacy.sig'));
+        return trim((string) file_get_contents(self::fixtures() . '/email.received.legacy.sig'));
     }
 
     /** Standard Webhooks headers. @return array<string, string> */
     private static function headers(): array
     {
-        return json_decode((string) file_get_contents(self::FIXTURES . '/email.received.headers.json'), true);
+        return json_decode((string) file_get_contents(self::fixtures() . '/email.received.headers.json'), true);
     }
 
     private static function event(): Event
@@ -236,9 +240,9 @@ final class WebhookTest extends TestCase
      */
     private static function multipart(): array
     {
-        $meta = json_decode((string) file_get_contents(self::FIXTURES . '/email.multipart.meta.json'), true);
+        $meta = json_decode((string) file_get_contents(self::fixtures() . '/email.multipart.meta.json'), true);
         preg_match('/boundary=(.+)$/', $meta['content_type'], $m);
-        $body = (string) file_get_contents(self::FIXTURES . '/email.multipart.body');
+        $body = (string) file_get_contents(self::fixtures() . '/email.multipart.body');
         $event = '';
         $files = [];
         foreach (explode('--' . $m[1], $body) as $part) {

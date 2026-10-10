@@ -8,7 +8,7 @@ namespace Wildye\EmailParser;
  * Fluent builder for an outbound transactional email.
  *
  *     $email = Email::create()
- *         ->from('orders@yourapp.com', 'Your App')
+ *         ->from('orders@yourapp.com', 'Your App')   // or ->fromName('Your App'); without one, the address's saved From name is used
  *         ->to('customer@example.com')
  *         ->subject('Your receipt')
  *         ->html('<p>Thanks for your order</p>')
@@ -30,6 +30,8 @@ final class Email
     private ?string $inReplyTo = null;
     /** @var list<string> */
     private array $references = [];
+    private ?string $fromName = null;
+    private ?bool $signature = null;
 
     public static function create(): self
     {
@@ -39,6 +41,26 @@ final class Email
     public function from(string $address, ?string $name = null): self
     {
         $this->from = self::address($address, $name);
+
+        return $this;
+    }
+
+    /** The From name: "Derek Wildman" in "Derek Wildman <derek@…>". Overrides a name given to from(). */
+    public function fromName(string $name): self
+    {
+        $name = trim($name);
+        if ($name === '' || preg_match('/[\x00-\x1F\x7F]/', $name)) {
+            throw new \InvalidArgumentException('A From name needs text, without line breaks');
+        }
+        $this->fromName = $name;
+
+        return $this;
+    }
+
+    /** false leaves out the From address's saved signature for this email (the domain's disclaimer is always added). */
+    public function signature(bool $include): self
+    {
+        $this->signature = $include;
 
         return $this;
     }
@@ -189,6 +211,12 @@ final class Email
         }
         if ($this->attachments !== []) {
             $payload['attachments'] = $this->attachments;
+        }
+        if ($this->fromName !== null) {
+            $payload['from_name'] = $this->fromName;
+        }
+        if ($this->signature !== null) {
+            $payload['signature'] = $this->signature;
         }
 
         return $payload;
