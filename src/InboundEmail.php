@@ -156,6 +156,18 @@ final class InboundEmail
         return is_array($this->extracted['fields'] ?? null) ? $this->extracted['fields'] : [];
     }
 
+    /** A schema parser's answer, in your JSON Schema's shape (null when there's no answer or no schema parser). */
+    public function extractedData(): mixed
+    {
+        return $this->extracted['data'] ?? null;
+    }
+
+    /** True when a schema parser's answer passed every check in your schema; see $extracted['errors'] otherwise. */
+    public function extractedValid(): bool
+    {
+        return ($this->extracted['valid'] ?? null) === true;
+    }
+
     /** Out-of-office reply, bounce or other machine-generated mail. */
     public function isAutoSubmitted(): bool
     {

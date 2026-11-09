@@ -322,6 +322,25 @@ Or sign your own payload in a unit test:
 $header = Webhook::sign($json, 'whsec_test');
 ```
 
+## Data requests on your webmail (GDPR)
+
+Find everything about one person on your GhostParse webmail (1.12.0 or later) and export it as a ZIP, for a subject access request: every mailbox and folder, email they sent or received, and email that mentions their address or your extra terms. It uses a webmail API key (`wmk_…`) made in the webmail under **Settings → Data requests → From another system**, not your GhostParse key. Review the ZIP and redact other people's data before you send it.
+
+```php
+use Wildye\EmailParser\WebmailDataRequests;
+
+$dsar = new WebmailDataRequests('https://example.com/mail', getenv('WEBMAIL_DATA_REQUEST_KEY'));
+$request = $dsar->create('jane@example.com', terms: ['Jane Doe', '07700 900123'], reference: 'DSAR-42');
+$ready = $dsar->wait($request['id'], onProgress: fn (array $r) => print("{$r['progress']['scanned']} of {$r['progress']['total']}\n"));
+$dsar->export($ready['id'], 'dsar-42.zip');
+$dsar->discard($ready['id']); // once answered: the results go, the record stays
+```
+
+`create()` also takes `mailboxes:`, `since:`, `until:` and `includeAttachments: false`. Errors are the same exception
+classes as the API client (`ConflictException` for 409, `AuthenticationException` for a wrong key).
+
+A request's `status` is `searching`, `ready` or `expired`; while it's searching, each read carries the search on and reports `progress`. The export is refused with 409 (`not_ready`) while it's searching and 410 (`expired`) once its results have been removed (after 30 days, or when discarded). If your hosting drops the Authorization header, send the key as X-Api-Key (`['key_header' => 'x-api-key']`).
+
 ## Laravel
 
 Use the [Laravel package](../laravel) (`composer require wildye/email-parser-laravel`): it registers a verified

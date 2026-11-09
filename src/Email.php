@@ -45,7 +45,7 @@ final class Email
         return $this;
     }
 
-    /** The From name: "Derek Wildman" in "Derek Wildman <derek@…>". Overrides a name given to from(). */
+    /** The From name: "Jane Smith" in "Jane Smith <jane@…>". Overrides a name given to from(). */
     public function fromName(string $name): self
     {
         $name = trim($name);

@@ -21,16 +21,29 @@ final class Attachment
         /** Multipart deliveries: the form part holding the file, e.g. "attachment_0". */
         public readonly ?string $part = null,
         private readonly ?string $filePath = null,
+        /**
+         * Attachment storage: where the file is in your bucket and a link to download it
+         * (provider, bucket, key, url, url_expires_at).
+         *
+         * @var array<string, mixed>|null
+         */
+        public readonly ?array $storage = null,
     ) {
     }
 
     /** The same attachment, with its bytes read from an uploaded file (multipart deliveries). */
     public function withFile(string $path): self
     {
-        return new self($this->filename, $this->contentType, $this->size, $this->contentId, $this->disposition, $this->base64Content, $this->sha256, $this->part, $path);
+        return new self($this->filename, $this->contentType, $this->size, $this->contentId, $this->disposition, $this->base64Content, $this->sha256, $this->part, $path, $this->storage);
     }
 
-    /** false when the account's attachment setting is "leave them out" (or a multipart file is missing). */
+    /** Attachment storage: the link to download the file from your bucket (null otherwise). */
+    public function storageUrl(): ?string
+    {
+        return isset($this->storage['url']) ? (string) $this->storage['url'] : null;
+    }
+
+    /** false when the account's attachment setting is "leave them out" or "upload to your bucket" (or a multipart file is missing). */
     public function hasContent(): bool
     {
         return $this->base64Content !== null || $this->filePath !== null;
@@ -48,6 +61,8 @@ final class Attachment
             isset($data['content']) ? (string) $data['content'] : null,
             isset($data['sha256']) ? (string) $data['sha256'] : null,
             isset($data['part']) ? (string) $data['part'] : null,
+            null,
+            isset($data['storage']) && is_array($data['storage']) ? $data['storage'] : null,
         );
     }
 
