@@ -2,6 +2,12 @@
 
 All notable changes to `wildye/email-parser`. Versions follow [semantic versioning](https://semver.org).
 
+## 1.4.1
+
+- Supports PHP 8.6: the tests pass on PHP 8.6.0 with every deprecation reported, and none come from the package. No
+  code changes were needed; tested on PHP 8.1 to 8.6.
+- `Client::VERSION` is 1.4.1.
+
 ## 1.4.0
 
 - `WebmailDataRequests`: data requests (GDPR subject access requests) on a GhostParse webmail (1.12.0 or later), with a

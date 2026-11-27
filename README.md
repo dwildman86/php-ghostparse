@@ -8,7 +8,7 @@ WILDYE LIMITED.
   attachments, the reply without its quoted history, SPF / DKIM / DMARC, bounces and auto-replies, calendar invites,
   spam and virus results.
 - **Signed reply addresses**, the **delivery log**, and the **Domains API** (domains, addresses, sender rules).
-- No dependencies beyond PHP 8.1+ with `ext-curl` and `ext-json`.
+- No dependencies beyond PHP 8.1+ (tested on 8.1 to 8.6) with `ext-curl` and `ext-json`.
 
 ```bash
 composer require wildye/email-parser
